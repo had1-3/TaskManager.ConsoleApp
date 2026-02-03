@@ -6,10 +6,10 @@ namespace Task_Manager_GPT.Models
 {
     public enum TaskStatus
     {
-        NotStarted,
+        New,
         InProgress,
         Completed,
-        OnHold,
-        Cancelled
+        Cancelled,
+        OnHold
     }
 }

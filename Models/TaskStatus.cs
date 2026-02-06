@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Task_Manager_GPT.Models
 {
-    public enum TaskStatus
+    public enum TaskItemStatus
     {
         New,
         InProgress,

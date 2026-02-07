@@ -7,7 +7,7 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Repositories
 {
-    public class TaskRepository : TaskItem , ITaskRepository
+    public class TaskRepository : ITaskRepository
     {
         private readonly List<TaskItem> _tasks = new List<TaskItem>();
         public void Add(TaskItem task)
@@ -22,7 +22,6 @@ namespace Task_Manager_GPT.Repositories
                 selectedTask.Name = updatedTask.Name;
                 selectedTask.Description = updatedTask.Description;
                 selectedTask.Status = updatedTask.Status;
-                
             }
         }
         public TaskItem GetByID(int ID)
@@ -43,14 +42,14 @@ namespace Task_Manager_GPT.Repositories
             var removeTask = GetByID(ID);
             if (removeTask != null)
             {
-            _tasks.Remove(removeTask);
+                _tasks.Remove(removeTask);
             }
             else
             {
                 Console.WriteLine($"Not found task with {ID} ID");
             }
         }
-           
+
     }
 }
 

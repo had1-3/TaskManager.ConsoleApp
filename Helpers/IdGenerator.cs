@@ -5,7 +5,7 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Helpers
 {
-    internal class IdGenerator
+    public class IdGenerator
     {
         private TaskItem _taskItem = new TaskItem();
         private void GenerateId()

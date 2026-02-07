@@ -10,11 +10,12 @@ namespace Task_Manager_GPT.Models
         public int ID { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }
-        public TaskStatus Status { get; set; }
+        public TaskItemStatus Status { get; set; }
 
         public TaskItem()
         {
             CreatedDate = DateTime.Now;
+            Status = TaskItemStatus.New;
         }
 
     }

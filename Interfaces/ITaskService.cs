@@ -7,13 +7,12 @@ namespace Task_Manager_GPT.Interfaces
 {
     interface ITaskService
     {
-        void CreateTask();
+        void CreateTask(string name, string desciption);
         void GetAllTasks();
         void GetTaskById();
         void UpdateTask();
         void UpdateStatusTask();
         void CheckAvabilityTask();
         void DeleteTask();
-
     }
 }

@@ -7,7 +7,7 @@ namespace Task_Manager_GPT.Models
     public class TaskItem
     {
         public string? Name { get; set; }
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }
         public TaskItemStatus Status { get; set; }
@@ -17,6 +17,5 @@ namespace Task_Manager_GPT.Models
             CreatedDate = DateTime.Now;
             Status = TaskItemStatus.New;
         }
-
     }
 }

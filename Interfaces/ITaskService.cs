@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Interfaces
 {
@@ -9,10 +10,9 @@ namespace Task_Manager_GPT.Interfaces
     {
         void CreateTask(string name, string desciption);
         void GetAllTasks();
-        void GetTaskById();
-        void UpdateTask();
-        void UpdateStatusTask();
-        void CheckAvabilityTask();
-        void DeleteTask();
+        TaskItem? GetTaskById (int Id);
+        void UpdateTask(TaskItem updatedTask, int Id);
+        void CheckItemTask(int Id);
+        void DeleteTask(int Id);
     }
 }

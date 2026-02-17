@@ -10,46 +10,46 @@ namespace Task_Manager_GPT.Repositories
     public class TaskRepository : ITaskRepository
     {
         private readonly List<TaskItem> _tasks = new List<TaskItem>();
+        private readonly ITaskRepository _baseRepo;
+        public TaskRepository(ITaskRepository baseRepo)
+        {
+            _baseRepo = baseRepo;
+        }
         public void Add(TaskItem task)
         {
             _tasks.Add(task);
-        }
-        public void Update(TaskItem updatedTask)
-        {
-            var selectedTask = _tasks.Find(taskItem => taskItem.ID == updatedTask.ID);
-            if (selectedTask != null)
-            {
-                selectedTask.Name = updatedTask.Name;
-                selectedTask.Description = updatedTask.Description;
-                selectedTask.Status = updatedTask.Status;
-            }
-        }
-        public TaskItem GetByID(int ID)
-        {
-            var task = _tasks.Find(taskItem => taskItem.ID == ID);
-            if (task == null)
-            {
-                throw new KeyNotFoundException($"Task with ID {ID} not found");
-            }
-            return task;
         }
         public List<TaskItem> GetAll()
         {
             return _tasks;
         }
-        public void Remove(int ID)
+        public TaskItem? GetById(int Id)
         {
-            var removeTask = GetByID(ID);
+            return _tasks.FirstOrDefault(taskItem => taskItem.Id == Id);
+        }
+        public void Update(TaskItem task)
+        {
+            var selectedTask = _tasks.FirstOrDefault(taskItem => taskItem.Id == task.Id);
+            if (selectedTask == null)
+            {
+                throw new KeyNotFoundException($"Task with ID {task.Id} not found");
+            }
+        }
+        public TaskItemStatus CheckItemStatus(int Id)
+        {
+            var taskStatus = _baseRepo.GetById(Id);
+            if (taskStatus == null)
+            {
+                throw new KeyNotFoundException($"Task with ID {Id} not found");
+            }
+            return taskStatus.Status;
+        }
+        public void Remove(int Id)
+        {
+            var removeTask = GetById(Id);
             if (removeTask != null)
-            {
                 _tasks.Remove(removeTask);
-            }
-            else
-            {
-                Console.WriteLine($"Not found task with {ID} ID");
-            }
         }
 
     }
 }
-

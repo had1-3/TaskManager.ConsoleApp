@@ -5,17 +5,13 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Helpers
 {
-    public class IdGenerator
+    public class IdGenerator : IIdGenerator
     {
-        private TaskItem _taskItem = new TaskItem();
-        private void GenerateId()
+        private int _currentId = 0;
+        public int GenerateId()
         {
-            _taskItem.ID = new Random().Next(1, 10001);
-        }
-        public int GetId()
-        {
-            GenerateId();
-            return _taskItem.ID;
+            _currentId++;
+            return _currentId;
         }
     }
 }

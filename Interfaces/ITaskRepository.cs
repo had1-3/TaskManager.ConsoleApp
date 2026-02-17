@@ -8,9 +8,10 @@ namespace Task_Manager_GPT.Interfaces
     public interface ITaskRepository
     {
         void Add(TaskItem task);
-        void Update(TaskItem updatedTask);
+        void Update(TaskItem task);
         List<TaskItem> GetAll();
-        TaskItem GetByID(int ID);
-        void Remove(int ID);
+        TaskItem? GetById(int Id);
+        void Remove(int Id);
+        TaskItemStatus CheckItemStatus(int Id);
     };
 }

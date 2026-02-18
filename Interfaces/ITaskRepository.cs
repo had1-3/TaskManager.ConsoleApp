@@ -12,6 +12,5 @@ namespace Task_Manager_GPT.Interfaces
         List<TaskItem> GetAll();
         TaskItem? GetById(int Id);
         void Remove(int Id);
-        TaskItemStatus CheckItemStatus(int Id);
     };
 }

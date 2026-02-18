@@ -11,8 +11,8 @@ namespace Task_Manager_GPT.Services
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _repository;
-        private readonly IdGenerator _idGenerator;
-        public TaskService(ITaskRepository repository, IdGenerator idGenerator)
+        private readonly IIdGenerator _idGenerator;
+        public TaskService(ITaskRepository repository, IIdGenerator idGenerator)
         {
             _repository = repository;
             _idGenerator = idGenerator;
@@ -48,39 +48,31 @@ namespace Task_Manager_GPT.Services
             }
             return taskId;
         }
-        public void UpdateTask(TaskItem updatedTask, int Id)
+        public void UpdateTask(TaskItem updatedTask)
         {
-            if (updatedTask != null)
+            if (updatedTask == null)
             {
-                var existingTask = _repository.GetById(Id);
-                if (existingTask == null)
-                {
-                    throw new KeyNotFoundException($"Task with ID {Id} not found");
-                }
-                existingTask.Name = updatedTask.Name;
-                existingTask.Description = updatedTask.Description;
-                existingTask.Status = updatedTask.Status;
-
-                _repository.Update(updatedTask);
+                throw new ArgumentNullException(nameof(updatedTask), "Task cannot be null");
             }
+            var existingTask = _repository.GetById(updatedTask.Id);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException($"Task with ID {updatedTask.Id} not found");
+            }
+            existingTask.Name = updatedTask.Name;
+            existingTask.Description = updatedTask.Description;
+            existingTask.Status = updatedTask.Status;
+
+            _repository.Update(existingTask);
         }
-        public void CheckItemTask(int Id)
+        public TaskItemStatus CheckItemStatus(int Id)
         {
-            var taskStatus = _repository.CheckItemStatus(Id);
-            switch (taskStatus)
+            var taskStatus = _repository.GetById(Id);
+            if (taskStatus == null)
             {
-                case TaskItemStatus.New:
-                    throw new Exception("New task");
-
-                case TaskItemStatus.Completed:
-                    throw new Exception("Task has been completed");
-
-                case TaskItemStatus.InProgress:
-                    throw new Exception("Task in progress");
-
-                case TaskItemStatus.Cancelled:
-                    throw new Exception("Task has been cancelled");
+                throw new KeyNotFoundException($"Task with ID {Id} not found");
             }
+            return taskStatus.Status;
         }
         public void DeleteTask(int Id)
         {

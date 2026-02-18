@@ -10,11 +10,6 @@ namespace Task_Manager_GPT.Repositories
     public class TaskRepository : ITaskRepository
     {
         private readonly List<TaskItem> _tasks = new List<TaskItem>();
-        private readonly ITaskRepository _baseRepo;
-        public TaskRepository(ITaskRepository baseRepo)
-        {
-            _baseRepo = baseRepo;
-        }
         public void Add(TaskItem task)
         {
             _tasks.Add(task);
@@ -34,22 +29,18 @@ namespace Task_Manager_GPT.Repositories
             {
                 throw new KeyNotFoundException($"Task with ID {task.Id} not found");
             }
-        }
-        public TaskItemStatus CheckItemStatus(int Id)
-        {
-            var taskStatus = _baseRepo.GetById(Id);
-            if (taskStatus == null)
-            {
-                throw new KeyNotFoundException($"Task with ID {Id} not found");
-            }
-            return taskStatus.Status;
+            selectedTask.Name = task.Name;
+            selectedTask.Description = task.Description;
+            selectedTask.Status = task.Status;
         }
         public void Remove(int Id)
         {
             var removeTask = GetById(Id);
-            if (removeTask != null)
-                _tasks.Remove(removeTask);
+            if (removeTask == null)
+            {
+                throw new KeyNotFoundException($"Task with ID {Id} not found");
+            }
+            _tasks.Remove(removeTask);
         }
-
     }
 }

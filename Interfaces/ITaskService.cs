@@ -11,8 +11,8 @@ namespace Task_Manager_GPT.Interfaces
         void CreateTask(string name, string desciption);
         void GetAllTasks();
         TaskItem? GetTaskById (int Id);
-        void UpdateTask(TaskItem updatedTask, int Id);
-        void CheckItemTask(int Id);
+        void UpdateTask(TaskItem updatedTask);
+        TaskItemStatus CheckItemStatus(int Id);
         void DeleteTask(int Id);
     }
 }

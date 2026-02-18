@@ -4,9 +4,12 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Task_Manager_GPT.Helpers;
+using Task_Manager_GPT.Interfaces;
 using Task_Manager_GPT.Models;
 using Task_Manager_GPT.Repositories;
+using Task_Manager_GPT.Services;
 
 namespace Task_Manager_GPT;
 
@@ -69,7 +72,105 @@ internal class Program
         Console.WriteLine($"\nЗалишилось завдань: {finalTasks.Count}");
         }
         */
+
+        Console.WriteLine("=== Testing TaskService ===");
+
+        var fakeRepo = new FakeTaskRepository();
+        var fakeId = new FakeIdGenerator();
+
+        var service = new TaskService(fakeRepo, fakeId);
+        // Create
+        service.CreateTask("Test Task", "Desciption about title2");
+        service.CreateTask("Test Task2", "Desciption about title3");
+        //var tasks = fakeRepo.GetAll();
+        //if (tasks.Count == 1 && tasks[0].Name == "Test Task")
+        //{
+        //    Console.WriteLine("CreateTask працює правильно");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("CreateTask не працює");
+        //}
+        //// Get by id
+        //var tasksg = service.GetTaskById(1);
+        //if (tasksg.Id == 1)
+        //{
+        //    Console.WriteLine("GetTaskById працює");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("GetTaskById не працює");
+        //}
+        //// delete task
+        //service.DeleteTask(1);
+        //if(fakeRepo.GetAll().Count == 0)
+        //{
+        //    Console.WriteLine("DeleteTask працює");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("DeleteTask не працює");
+        //}
+        var taskUp = service.GetTaskById(1);
+        Console.WriteLine($"До оновлення: {taskUp.Name} - {taskUp.Description} - {taskUp.Status}");
+        var updatedTask1 = new TaskItem
+        {
+            Id = 1,
+            Name = "Update title",
+            Description = "Update Description",
+            Status = TaskItemStatus.InProgress
+        };
+        service.UpdateTask(updatedTask1);
+        var result = service.GetTaskById(1);
+        if (result.Name == "Update title" && result.Description == "Update Description" && result.Status == TaskItemStatus.InProgress)
+            Console.WriteLine("UpdateTask OK");
+        else
+            Console.WriteLine("UpdateTask FAIL");
+
+
+        var status = service.CheckItemStatus(1);
+        if (status == TaskItemStatus.InProgress)
+            Console.WriteLine("CheckItemStatus OK");
+        else
+            Console.WriteLine("CheckItemStatus FAIL");
     }
 }
+public class FakeTaskRepository : ITaskRepository
+{
+    private readonly List<TaskItem> _tasks = new();
 
+    public void Add(TaskItem task)
+    {
+        _tasks.Add(task);
+    }
+
+    public List<TaskItem> GetAll()
+    {
+        return _tasks;
+    }
+
+    public TaskItem? GetById(int id)
+    {
+        return _tasks.FirstOrDefault(t => t.Id == id);
+    }
+
+    public void Update(TaskItem task) { }
+
+    public void Remove(int id)
+    {
+        var task = GetById(id);
+        if (task != null)
+            _tasks.Remove(task);
+    }
+}
+public class FakeIdGenerator : IIdGenerator
+{
+    private int _id = 0;
+
+    public int GenerateId()
+    {
+        _id++;
+        return _id;
+    }
+}
 

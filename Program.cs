@@ -72,7 +72,6 @@ internal class Program
         Console.WriteLine($"\nЗалишилось завдань: {finalTasks.Count}");
         }
         */
-
         Console.WriteLine("=== Testing TaskService ===");
 
         var fakeRepo = new FakeTaskRepository();
@@ -81,36 +80,26 @@ internal class Program
         var service = new TaskService(fakeRepo, fakeId);
         // Create
         service.CreateTask("Test Task", "Desciption about title2");
-        service.CreateTask("Test Task2", "Desciption about title3");
-        //var tasks = fakeRepo.GetAll();
-        //if (tasks.Count == 1 && tasks[0].Name == "Test Task")
-        //{
-        //    Console.WriteLine("CreateTask працює правильно");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("CreateTask не працює");
-        //}
-        //// Get by id
-        //var tasksg = service.GetTaskById(1);
-        //if (tasksg.Id == 1)
-        //{
-        //    Console.WriteLine("GetTaskById працює");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("GetTaskById не працює");
-        //}
-        //// delete task
-        //service.DeleteTask(1);
-        //if(fakeRepo.GetAll().Count == 0)
-        //{
-        //    Console.WriteLine("DeleteTask працює");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("DeleteTask не працює");
-        //}
+        var tasks = fakeRepo.GetAll();
+        if (tasks.Count == 1 && tasks[0].Name == "Test Task")
+        {
+            Console.WriteLine("CreateTask працює правильно");
+        }
+        else
+        {
+            Console.WriteLine("CreateTask не працює");
+        }
+        // Get by id
+        var tasksg = service.GetTaskById(1);
+        if (tasksg.Id == 1)
+        {
+            Console.WriteLine("GetTaskById працює");
+        }
+        else
+        {
+            Console.WriteLine("GetTaskById не працює");
+        }
+        // Update task 
         var taskUp = service.GetTaskById(1);
         Console.WriteLine($"До оновлення: {taskUp.Name} - {taskUp.Description} - {taskUp.Status}");
         var updatedTask1 = new TaskItem
@@ -133,44 +122,56 @@ internal class Program
             Console.WriteLine("CheckItemStatus OK");
         else
             Console.WriteLine("CheckItemStatus FAIL");
+        // get all 
+        service.GetAllTasks();
+        // delete task
+        service.DeleteTask(1);
+        if (fakeRepo.GetAll().Count == 0)
+        {
+            Console.WriteLine("DeleteTask працює");
+        }
+        else
+        {
+            Console.WriteLine("DeleteTask не працює");
+        }
     }
-}
-public class FakeTaskRepository : ITaskRepository
-{
-    private readonly List<TaskItem> _tasks = new();
-
-    public void Add(TaskItem task)
+    public class FakeTaskRepository : ITaskRepository
     {
-        _tasks.Add(task);
+        private readonly List<TaskItem> _tasks = new();
+
+        public void Add(TaskItem task)
+        {
+            _tasks.Add(task);
+        }
+
+        public List<TaskItem> GetAll()
+        {
+            return _tasks;
+        }
+
+        public TaskItem? GetById(int id)
+        {
+            return _tasks.FirstOrDefault(t => t.Id == id);
+        }
+
+        public void Update(TaskItem task) { }
+
+        public void Remove(int id)
+        {
+            var task = GetById(id);
+            if (task != null)
+                _tasks.Remove(task);
+        }
     }
-
-    public List<TaskItem> GetAll()
+    public class FakeIdGenerator : IIdGenerator
     {
-        return _tasks;
-    }
+        private int _id = 0;
 
-    public TaskItem? GetById(int id)
-    {
-        return _tasks.FirstOrDefault(t => t.Id == id);
-    }
-
-    public void Update(TaskItem task) { }
-
-    public void Remove(int id)
-    {
-        var task = GetById(id);
-        if (task != null)
-            _tasks.Remove(task);
-    }
-}
-public class FakeIdGenerator : IIdGenerator
-{
-    private int _id = 0;
-
-    public int GenerateId()
-    {
-        _id++;
-        return _id;
+        public int GenerateId()
+        {
+            _id++;
+            return _id;
+        }
     }
 }
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Task_Manager_GPT.Helpers;
 using Task_Manager_GPT.Interfaces;
 using Task_Manager_GPT.Models;
@@ -23,6 +25,10 @@ namespace Task_Manager_GPT.Services
             {
                 throw new KeyNotFoundException("A task must have name!");
             }
+            if (desciption == null)
+            {
+                desciption = "Empty desciption";
+            }
             var task = new TaskItem
             {
                 Name = name,
@@ -31,13 +37,9 @@ namespace Task_Manager_GPT.Services
             };
             _repository.Add(task);
         }
-        public void GetAllTasks()
+        public List<TaskItem> GetAllTasks()
         {
-            var tasks = _repository.GetAll();
-            foreach (var task in tasks)
-            {
-                Console.WriteLine($"Name: {task.Name}; - ID: {task.Id}; - Status: {task.Status} ");
-            }
+            return _repository.GetAll();
         }
         public TaskItem GetTaskById(int Id)
         {
@@ -46,22 +48,23 @@ namespace Task_Manager_GPT.Services
             {
                 throw new KeyNotFoundException($"Task with ID {Id} not found");
             }
+            Console.WriteLine($"Name: {taskId.Name}; - ID: {taskId.Id}; - Status: {taskId.Status}; Time - {taskId.CreatedDate:HH:mm} ");
             return taskId;
         }
-        public void UpdateTask(TaskItem updatedTask)
+        public void UpdateTask(int updatedTaskId, string updatedTaskName, string updatedTaskDescription, TaskItemStatus updatedTaskStatus)
         {
-            if (updatedTask == null)
+            if (updatedTaskName == null)
             {
-                throw new ArgumentNullException(nameof(updatedTask), "Task cannot be null");
+                throw new ArgumentNullException(nameof(updatedTaskName), "Task cannot be null");
             }
-            var existingTask = _repository.GetById(updatedTask.Id);
+            var existingTask = _repository.GetById(updatedTaskId);
             if (existingTask == null)
             {
-                throw new KeyNotFoundException($"Task with ID {updatedTask.Id} not found");
+                throw new KeyNotFoundException($"Task with ID {updatedTaskId} not found");
             }
-            existingTask.Name = updatedTask.Name;
-            existingTask.Description = updatedTask.Description;
-            existingTask.Status = updatedTask.Status;
+            existingTask.Name = updatedTaskName;
+            existingTask.Description = updatedTaskDescription;
+            existingTask.Status = updatedTaskStatus;
 
             _repository.Update(existingTask);
         }

@@ -35,12 +35,8 @@ namespace Task_Manager_GPT.Repositories
         }
         public void Remove(int Id)
         {
-            var removeTask = GetById(Id);
-            if (removeTask == null)
-            {
-                throw new KeyNotFoundException($"Task with ID {Id} not found");
-            }
-            _tasks.Remove(removeTask);
+            var removedTask = GetById(Id);
+            _tasks.Remove(removedTask!);
         }
     }
 }

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Task_Manager_GPT.UI
 {
-    internal class ConsoleMenu
+    public class ConsoleMenu
     {
+
     }
 }

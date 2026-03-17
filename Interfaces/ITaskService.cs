@@ -14,5 +14,6 @@ namespace Task_Manager_GPT.Interfaces
         void UpdateTask(int updatedTaskId, string updatedTaskName, string updatedTaskDescription, TaskItemStatus updatedTaskStatus);
         TaskItemStatus CheckItemStatus(int Id);
         void DeleteTask(int Id);
+        void GetId();
     }
 }

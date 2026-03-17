@@ -48,7 +48,6 @@ namespace Task_Manager_GPT.Services
             {
                 throw new KeyNotFoundException($"Task with ID {Id} not found");
             }
-            Console.WriteLine($"Name: {taskId.Name}; - ID: {taskId.Id}; - Status: {taskId.Status}; Time - {taskId.CreatedDate:HH:mm} ");
             return taskId;
         }
         public void UpdateTask(int updatedTaskId, string updatedTaskName, string updatedTaskDescription, TaskItemStatus updatedTaskStatus)
@@ -85,6 +84,10 @@ namespace Task_Manager_GPT.Services
                 throw new KeyNotFoundException($"Task with ID {Id} not found");
             }
             _repository.Remove(Id);
+        }
+        public void GetId()
+        {
+            _idGenerator.GetId();
         }
     }
 }

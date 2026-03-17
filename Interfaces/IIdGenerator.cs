@@ -7,5 +7,6 @@ namespace Task_Manager_GPT.Interfaces
     public interface IIdGenerator
     {
         int GenerateId();
+        void GetId();
     }
 }

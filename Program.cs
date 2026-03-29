@@ -22,9 +22,9 @@ internal class Program
         var taskRepository = new TaskRepository();
         var taskIdGenerator = new IdGenerator();
         var taskService = new TaskService(taskRepository, taskIdGenerator);
-        var taskInputHandler = new ConsoleInputHandler(taskService);
-        var taskConsoleMenu = new ConsoleMenu(taskInputHandler);
-        taskConsoleMenu.WorkProcess();
+        var taskConsoleMenu = new ConsoleMenu();
+        var taskInputHandler = new ConsoleInputHandler(taskService, taskConsoleMenu);
+        taskInputHandler.WorkProcess();
     }
 }
 /* Тестування Idgenerator

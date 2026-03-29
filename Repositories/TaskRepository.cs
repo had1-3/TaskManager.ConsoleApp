@@ -29,7 +29,7 @@ namespace Task_Manager_GPT.Repositories
             {
                 throw new KeyNotFoundException($"Task with ID {task.Id} not found");
             }
-            selectedTask.Name = task.Name;
+            selectedTask.Title = task.Title;
             selectedTask.Description = task.Description;
             selectedTask.Status = task.Status;
         }

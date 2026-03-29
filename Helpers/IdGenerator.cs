@@ -14,9 +14,9 @@ namespace Task_Manager_GPT.Helpers
             _currentId++;
             return _currentId;
         }
-        public void GetId()
+        public int GetId()
         {
-            Console.WriteLine($"{_currentId}");
+            return _currentId;
         }
     }
 }

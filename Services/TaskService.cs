@@ -19,21 +19,21 @@ namespace Task_Manager_GPT.Services
             _repository = repository;
             _idGenerator = idGenerator;
         }
-        public void CreateTask(string name, string desciption)
+        public void CreateTask(string title, string description)
         {
-            if (name == null)
+            if (title == null)
             {
                 throw new KeyNotFoundException("A task must have name!");
             }
-            if (desciption == null)
+            if (description == null)
             {
-                desciption = "Empty desciption";
+                description = "Empty desciption";
             }
             var task = new TaskItem
             {
-                Name = name,
+                Title = title,
                 Id = _idGenerator.GenerateId(),
-                Description = desciption,
+                Description = description,
             };
             _repository.Add(task);
         }
@@ -50,18 +50,18 @@ namespace Task_Manager_GPT.Services
             }
             return taskId;
         }
-        public void UpdateTask(int updatedTaskId, string updatedTaskName, string updatedTaskDescription, TaskItemStatus updatedTaskStatus)
+        public void UpdateTask(int updatedTaskId, string updatedTaskTitle, string updatedTaskDescription, TaskItemStatus updatedTaskStatus)
         {
-            if (updatedTaskName == null)
+            if (updatedTaskTitle == null)
             {
-                throw new ArgumentNullException(nameof(updatedTaskName), "Task cannot be null");
+                throw new ArgumentNullException(nameof(updatedTaskTitle), "Task cannot be null");
             }
             var existingTask = _repository.GetById(updatedTaskId);
             if (existingTask == null)
             {
                 throw new KeyNotFoundException($"Task with ID {updatedTaskId} not found");
             }
-            existingTask.Name = updatedTaskName;
+            existingTask.Title = updatedTaskTitle;
             existingTask.Description = updatedTaskDescription;
             existingTask.Status = updatedTaskStatus;
 
@@ -85,9 +85,13 @@ namespace Task_Manager_GPT.Services
             }
             _repository.Remove(Id);
         }
-        public void GetId()
+        public int ServiceGetId()
         {
-            _idGenerator.GetId();
+            return _idGenerator.GetId();
+        }
+        public int GetTaskCount()
+        {
+            return _repository.GetAll().Count;
         }
     }
 }

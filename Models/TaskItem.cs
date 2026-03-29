@@ -6,7 +6,7 @@ namespace Task_Manager_GPT.Models
 {
     public class TaskItem
     {
-        public string? Name { get; set; }
+        public string? Title { get; set; }
         public int Id { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }

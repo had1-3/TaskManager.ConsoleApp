@@ -67,11 +67,15 @@ public class TaskItem
     public DateTime CreatedDate { get; set; }
 }
 
+---
+
 ## Task Status:
 - New
 - In Progress
 - Completed
 - Canceled
+
+---
 
 # How to Run
 - Clone the repository:
@@ -79,6 +83,8 @@ public class TaskItem
 - Open in Visual Studio
 - Run the project:
 - Ctrl + F5
+
+---
 
 ## ⚠️ Known Limitations
 
@@ -96,6 +102,8 @@ public class TaskItem
 🧪 Unit tests
 🔍 Search and filtering
 🌐 API version (ASP.NET Core)
+
+---
 
 ## What I Learned
 - Building structured console applications

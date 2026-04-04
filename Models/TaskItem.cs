@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Task_Manager_GPT.Models
 {
-    public class TaskItem
+    public class TaskItem // Full finished
     {
         public string? Title { get; set; }
         public int Id { get; set; }

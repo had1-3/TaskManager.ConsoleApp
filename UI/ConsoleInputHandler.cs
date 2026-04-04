@@ -13,16 +13,16 @@ namespace Task_Manager_GPT.UI
 {
     public class ConsoleInputHandler
     {
-        private readonly ITaskService _taskServiceInput;
+        private readonly ITaskService _taskService;
         private readonly ConsoleMenu _consoleMenu;
         private readonly DateTime _startTime;
 
         private readonly Dictionary<string, Action> _actionHandler;
-        private readonly Dictionary<int, TaskItemStatus> _status;
+        private readonly Dictionary<string, TaskItemStatus> _status;
 
-        public ConsoleInputHandler(ITaskService taskServiceInput, ConsoleMenu consoleMenu)
+        public ConsoleInputHandler(ITaskService taskService, ConsoleMenu consoleMenu)
         {
-            _taskServiceInput = taskServiceInput;
+            _taskService = taskService;
             _consoleMenu = consoleMenu;
 
             _actionHandler = new Dictionary<string, Action>
@@ -34,12 +34,12 @@ namespace Task_Manager_GPT.UI
                 ["5"] = HandlerDeleteTask,
             };
 
-            _status = new Dictionary<int, TaskItemStatus>
+            _status = new Dictionary<string, TaskItemStatus>
             {
-                [1] = TaskItemStatus.New,
-                [2] = TaskItemStatus.InProgress,
-                [3] = TaskItemStatus.Completed,
-                [4] = TaskItemStatus.Cancelled,
+                ["1"] = TaskItemStatus.New,
+                ["2"] = TaskItemStatus.InProgress,
+                ["3"] = TaskItemStatus.Completed,
+                ["4"] = TaskItemStatus.Canceled,
 
             };
             _startTime = DateTime.Now;
@@ -56,22 +56,26 @@ namespace Task_Manager_GPT.UI
                 if (choice == "B")
                 {
                     TimeSpan workTime = DateTime.Now - _startTime;
-                    int countTask = _taskServiceInput.GetTaskCount();
+                    int countTask = _taskService.GetTaskCount();
 
                     _consoleMenu.DrawExitProgram(countTask, workTime);
-                    Console.SetCursorPosition(0, 15);
                     break;
                 }
-                if (choice != null && _actionHandler.TryGetValue(choice, out Action action))
+                if (choice != null && _actionHandler.TryGetValue(choice, out Action? action))
                 {
-                    action();
+                    action?.Invoke();
                 }
                 else
                 {
-                    Console.WriteLine("Invalid option");
+                    _consoleMenu.ShowError("Invalid input");
                 }
             }
-        } // main method
+        } // Main method
+        public string ReadInput(int x, int y) // Reader
+        {
+            Console.SetCursorPosition(x, y);
+            return Console.ReadLine() ?? "";
+        }
 
         public void HandlerCreateTask()
         {
@@ -80,14 +84,18 @@ namespace Task_Manager_GPT.UI
                 Console.Clear();
 
                 _consoleMenu.DrawCreateTitle();
-                string? inputTitle = _consoleMenu.CreateReadTitle();
+                string? inputTitle = ReadInput(19, 5);
+                if ( inputTitle == "" || inputTitle == " ")
+                {
+                    inputTitle = "Title";
+                }
 
                 _consoleMenu.DrawCreateDescription();
-                string? inputDescription = _consoleMenu.CreateReadDescription();
+                string? inputDescription = ReadInput(25, 9);
 
-                _taskServiceInput.CreateTask(inputTitle, inputDescription);
+                _taskService.CreateTask(inputTitle, inputDescription);
 
-                int currentId = _taskServiceInput.ServiceGetId();
+                int currentId = _taskService.GetTaskId();
 
                 _consoleMenu.DrawCompleteCreate(currentId);
 
@@ -98,20 +106,20 @@ namespace Task_Manager_GPT.UI
                     Console.Clear();
                     break;
                 }
-                _consoleMenu.ShowError("Invalid intput");
+                _consoleMenu.ShowError("Invalid input");
                 break;
             }
-        } // full finished
+        } // Full finished
         public void HandlerGetAllTasks()
         {
             while (true)
             {
                 Console.Clear();
 
-                var allTasks = _taskServiceInput.GetAllTasks();
+                var allTasks = _taskService.GetAllTasks();
                 if (!allTasks.Any())
                 {
-                    _consoleMenu.ShowNotTaskFound("User don't have tasks");
+                    _consoleMenu.DrawGetAllNotTask("User doesn't have tasks");
                     break;
                 }
 
@@ -137,12 +145,12 @@ namespace Task_Manager_GPT.UI
                         HandlerDeleteTask();
                         break;
                     default:
-                        _consoleMenu.ShowError("Invalid intput");
+                        _consoleMenu.ShowError("Invalid input");
                         break;
                 }
                 break;
             }
-        }  // full finished
+        } // Full finished
         public void HandlerGetTaskById()
         {
             while (true)
@@ -157,7 +165,7 @@ namespace Task_Manager_GPT.UI
                 {
                     try
                     {
-                        var taskById = _taskServiceInput.GetTaskById(id);
+                        var taskById = _taskService.GetTaskById(id);
 
                         _consoleMenu.DrawTaskGetId(taskById!);
                         string? choice = Console.ReadLine()?.ToUpper() ?? "";
@@ -175,76 +183,136 @@ namespace Task_Manager_GPT.UI
                                 HandlerDeleteTask();
                                 break;
                             default:
-                                _consoleMenu.ShowError("Invalid intput");
+                                _consoleMenu.ShowError("Invalid input");
                                 break;
                         }
                         break;
                     }
                     catch (KeyNotFoundException)
                     {
-                        _consoleMenu.ShowNotTaskFound("User don't have tasks");
+                        _consoleMenu.ShowNotTaskFound("User doesn't have task");
                         break;
                     }
                 }
                 else
                 {
-                    _consoleMenu.ShowError("Invalid intput");
+                    _consoleMenu.ShowError("Invalid input");
                     break;
                 }
             }
-        } // full finished
-
+        } // Full finished
         public void HandlerUpdateTask()
-        {
-            _taskServiceInput.GetAllTasks();
-
-            Console.Write("Input ID your task for update: ");
-            if (!int.TryParse(Console.ReadLine(), out int inputId))
-            {
-                Console.WriteLine("Invalid ID!");
-                return;
-            }
-
-            var existingTask = _taskServiceInput.GetTaskById(inputId);
-            if (existingTask == null)
-            {
-                Console.WriteLine($"Task with ID {inputId} not found");
-                return;
-            }
-            Console.WriteLine($"Input name (was: {existingTask.Title}): ");
-            string updatedTaskName = Console.ReadLine()!;
-
-            Console.WriteLine($"Input description (was: {existingTask.Description}): ");
-            string updatedTaskDescription = Console.ReadLine()!;
-
-            Console.WriteLine("Select status for your task: ");
-            TaskItemStatus updatedTaskstatus = HandlerSelectStatus();
-
-            _taskServiceInput.UpdateTask(inputId, updatedTaskName, updatedTaskDescription, updatedTaskstatus);
-            Console.WriteLine("Task has been updated");
-        }
-        public TaskItemStatus HandlerSelectStatus()
         {
             while (true)
             {
-                foreach (var item in _status)
-                {
-                    Console.WriteLine($"{item.Key} - {item.Value}");
-                }
-                Console.Write("Your choice: ");
-                if (!int.TryParse(Console.ReadLine(), out int choice))
-                {
-                    Console.WriteLine("Invalid ID!\nTry again: ");
-                    return TaskItemStatus.New;
-                }
-                if (_status.TryGetValue(choice, out var status))
-                {
-                    return status;
-                }
-                Console.WriteLine("Invalid choice");
-            }
-        }
+                string? newTitle;
+                string? newDescription;
+                TaskItemStatus currentStatus;
 
+                Console.Clear();
+
+                _consoleMenu.DrawMenuUpdate();
+
+                string? input = Console.ReadLine();
+                if (int.TryParse(input, out int id))
+                {
+                    try
+                    {
+                        var updateTaskId = _taskService.GetTaskById(id);
+                        _consoleMenu.DrawCurrentInformation(updateTaskId!);
+
+                        string? choice = Console.ReadLine()?.ToUpper() ?? "";
+                        if (choice == "B")
+                        {
+                            Console.Clear();
+                            break;
+                        }
+                        switch (choice)
+                        {
+                            case "1":
+                                Console.Clear();
+
+                                _consoleMenu.DrawChangeTitle();
+
+                                newTitle = ReadInput(26, 5);
+
+                                _taskService.UpdateTaskTitle(id, newTitle);
+                                _consoleMenu.DrawUpdateComplited();
+                                choice = Console.ReadLine()?.ToUpper() ?? "";
+                                if (choice == "B")
+                                {
+                                    Console.Clear();
+                                    break;
+                                }
+                                else
+                                    _consoleMenu.ShowError("Invalid input");
+                                break; // Update title finished
+                            case "2":
+                                Console.Clear();
+
+                                _consoleMenu.DrawChangeDescription();
+
+                                newDescription = ReadInput(32, 5);
+
+                                _taskService.UpdateTaskDescription(id, newDescription);
+                                _consoleMenu.DrawUpdateComplited();
+                                choice = Console.ReadLine()?.ToUpper() ?? "";
+                                if (choice == "B")
+                                {
+                                    Console.Clear();
+                                    break;
+                                }
+                                else
+                                    _consoleMenu.ShowError("Invalid input");
+                                break; // Update description finished
+                            case "3":
+                                Console.Clear();
+
+                                currentStatus = _taskService.GetTaskStatus(id);
+
+                                _consoleMenu.DrawChangeStatus(currentStatus);
+
+                                choice = Console.ReadLine()?.ToUpper() ?? "";
+                                if (choice == "B")
+                                {
+                                    Console.Clear();
+                                    break;
+                                }
+                                if (_status.TryGetValue(choice, out TaskItemStatus newStatus))
+                                {
+                                    _taskService.UpdateTaskStatus(id, newStatus);
+                                    _consoleMenu.DrawUpdateComplited();
+                                    choice = Console.ReadLine()?.ToUpper() ?? "";
+                                    if (choice == "B")
+                                    {
+                                        Console.Clear();
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    _consoleMenu.ShowError("Invalid task");
+                                }
+                                break; // Update status finished
+                            default:
+                                _consoleMenu.ShowError("Invalid input");
+                                break;
+                        }
+                        break;
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        _consoleMenu.ShowNotTaskFound("User doesn't have task");
+                        break;
+                    }
+                }
+                else
+                {
+                    _consoleMenu.ShowError("Invalid input");
+                    break;
+                }
+            }
+        } // Full finished
         public void HandlerDeleteTask()
         {
             while (true)
@@ -258,40 +326,39 @@ namespace Task_Manager_GPT.UI
                 {
                     try
                     {
-                        var deletedTask = _taskServiceInput.GetTaskById(id);
+                        var deletedTask = _taskService.GetTaskById(id);
                         _consoleMenu.DrawDeletionProcess(deletedTask!);
 
                         string? choice = Console.ReadLine()?.ToUpper() ?? "";
                         switch (choice)
                         {
                             case "Y":
-                                _taskServiceInput.DeleteTask(id);
-                                _consoleMenu.DrawDeleteConfirmed();
+                                _taskService.DeleteTask(id);
+                                _consoleMenu.DrawDeleteComplited();
 
-                                string? choiceY = Console.ReadLine()?.ToUpper() ?? "";
-                                if (choiceY == "B")
+                                choice = Console.ReadLine()?.ToUpper() ?? "";
+                                if (choice == "B")
                                 {
                                     Console.Clear();
                                     break;
                                 }
                                 else
-                                    _consoleMenu.ShowError("Invalid intput");
+                                    _consoleMenu.ShowError("Invalid input");
                                 break;
                             case "N":
                                 _consoleMenu.DrawDeleteCancelled();
 
-                                string? choiceN = Console.ReadLine()?.ToUpper() ?? "";
-                                if (choiceN == "B")
+                                choice = Console.ReadLine()?.ToUpper() ?? "";
+                                if (choice == "B")
                                 {
                                     Console.Clear();
                                     break;
                                 }
                                 else
-                                    Console.SetCursorPosition(0, 17);
-                                _consoleMenu.ShowError("Invalid intput");
+                                    _consoleMenu.ShowError("Invalid input");
                                 break;
                             default:
-                                _consoleMenu.ShowError("Invalid intput");
+                                _consoleMenu.ShowError("Invalid input");
                                 break;
                         }
                         break;
@@ -299,16 +366,16 @@ namespace Task_Manager_GPT.UI
 
                     catch (KeyNotFoundException)
                     {
-                        _consoleMenu.ShowNotTaskFound("User don't have tasks");
+                        _consoleMenu.ShowNotTaskFound("User doesn't have task");
                         break;
                     }
                 }
                 else
                 {
-                    _consoleMenu.ShowError("Invalid intput");
+                    _consoleMenu.ShowError("Invalid input");
                     break;
                 }
             }
-        }  // full finished
+        } // Full finished
     }
 }

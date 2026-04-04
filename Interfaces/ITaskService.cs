@@ -6,15 +6,30 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Interfaces
 {
-    public interface ITaskService
+    public interface ITaskService // Full finished
     {
+        // Create task
         void CreateTask(string title, string description);
+
+        // Get all task
         List<TaskItem> GetAllTasks();
+
+        // Get task by id
         TaskItem? GetTaskById (int Id);
-        void UpdateTask(int updatedTaskId, string updatedTaskTitle, string updatedTaskDescription, TaskItemStatus updatedTaskStatus);
-        TaskItemStatus CheckItemStatus(int Id);
+
+        // Update task
+        void UpdateTaskTitle(int updatedTaskId, string updatedTaskTitle);
+        void UpdateTaskDescription(int updatedTaskId, string updatedTaskDescription);
+        void UpdateTaskStatus(int updatedTaskId, TaskItemStatus updatedTaskStatus);
+
+        // Delete task
         void DeleteTask(int Id);
-        int ServiceGetId();
+
+        // Method for get value
+        TaskItemStatus GetTaskStatus(int Id);
+        int GetTaskId();
         int GetTaskCount();
+        string GetDescription(int currentId);
+        string GetTitle(int currentId);
     }
 }

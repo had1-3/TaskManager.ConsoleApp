@@ -1,28 +1,18 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.UI
 {
-    public class ConsoleMenu
+    public class ConsoleMenu // Full finished
     {
-        public string CreateReadTitle()
-        {
-            Console.SetCursorPosition(22, 5);
-            return Console.ReadLine() ?? "";
-        }
-        public string CreateReadDescription()
-        {
-            Console.SetCursorPosition(28, 9);
-            return Console.ReadLine() ?? "";
-        }
-
-
-
         // Drawing methods
 
         // Draw menu and exit
@@ -40,7 +30,7 @@ namespace Task_Manager_GPT.UI
                 "║  4.  Edit task                                             ║\n" +
                 "║  5.  Delete task                                           ║\n" +
                 "║                                                            ║\n" +
-                "║  B.  Exit of program                                       ║\n" +
+                "║  B.  Exit the program                                      ║\n" +
                 "╠════════════════════════════════════════════════════════════╣\n" +
                 "║  Choose option [1-B]:                                      ║\n" +
                 "╚════════════════════════════════════════════════════════════╝\n");
@@ -63,10 +53,11 @@ namespace Task_Manager_GPT.UI
                "║  │  Thank you for your work!          │                    ║\n" +
                "║  └────────────────────────────────────┘                    ║\n" +
                "╚════════════════════════════════════════════════════════════╝\n");
+            Console.SetCursorPosition(0, 15);
         }
 
-        // Not task and erorr option
-        public void ShowNotTaskFound(string notTask)
+        // Draw not task and erorr option
+        public void ShowNotTaskFound(string userHasNotTask)
         {
             Console.Clear();
             Console.WriteLine("" +
@@ -105,7 +96,7 @@ namespace Task_Manager_GPT.UI
             Console.ReadKey();
         }
 
-        // Create
+        // Draw create
         public void DrawCreateTitle()
         {
             Console.WriteLine("" +
@@ -114,10 +105,9 @@ namespace Task_Manager_GPT.UI
                 "╠═══════════════════════════════════════════════════════════╣\n" +
                 "║                                                           ║\n" +
                 "║   ┌───────────────────────────────────────────────────┐   ║\n" +
-                "║   │  Title of task:                                   │   ║\n" +
+                "║   │  Title Task:                                      │   ║\n" +
                 "║   └───────────────────────────────────────────────────┘   ║\n" +
                 "╚═══════════════════════════════════════════════════════════╝\n");
-            Console.SetCursorPosition(22, 5);
         }
         public void DrawCreateDescription()
         {
@@ -125,10 +115,9 @@ namespace Task_Manager_GPT.UI
             Console.WriteLine(
                 "║                                                           ║\n" +
                 "║   ┌───────────────────────────────────────────────────┐   ║\n" +
-                "║   │  Description of task:                             │   ║\n" +
+                "║   │  Description Task:                                │   ║\n" +
                 "║   └───────────────────────────────────────────────────┘   ║\n" +
                 "╚═══════════════════════════════════════════════════════════╝\n");
-            Console.SetCursorPosition(28, 9);
         }
         public void DrawCompleteCreate(int ID)
         {
@@ -157,7 +146,7 @@ namespace Task_Manager_GPT.UI
             Console.SetCursorPosition(46, 16);
         }
 
-        // Get all
+        // Draw get all
         public void DrawTasksGetAll(List<TaskItem> allTasks)
         {
             Console.WriteLine("" +
@@ -165,12 +154,12 @@ namespace Task_Manager_GPT.UI
                 "║                         All tasks                         ║\n" +
                 "╠═══════════════════════════════════════════════════════════╣\n" +
                 "║                                                           ║\n" +
-                "║  ID  │ Name               │ Status       │ Create time    ║\n" +
+                "║  ID  │ Title              │ Status       │ Created time   ║\n" +
                 "╠══════╪════════════════════╪══════════════╪════════════════╣");
             foreach (var task in allTasks)
             {
                 Console.WriteLine(
-                $"║  {task.Id,2}. │ {task.Title,-18} │ {task.Status,-12} │ {task.CreatedDate:HH:mm}          ║");
+                $"║  {task.Id,2}. │ {task.Title,-18} │ {EnumHelper.GetDescription(task.Status),-12} │ {task.CreatedDate:HH:mm}          ║");
             }
         }
         public void DrawMenuGetAll()
@@ -200,8 +189,27 @@ namespace Task_Manager_GPT.UI
 
             Console.SetCursorPosition(27, inputLine);
         }
+        public void DrawGetAllNotTask(string userHasNotTasks)
+        {
+            Console.Clear();
+            Console.WriteLine("" +
+            "╔═══════════════════════════════════════════════════════════╗\n" +
+            "║                       System message                      ║\n" +
+            "╠═══════════════════════════════════════════════════════════╣\n" +
+            "║                                                           ║\n" +
+            "║                       No tasks found                      ║\n" +
+            "║                                                           ║\n" +
+            "╠═══════════════════════════════════════════════════════════╣\n" +
+            "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+            "║   │  Press any key, to return to the menu...          │   ║\n" +
+            "║   └───────────────────────────────────────────────────┘   ║\n" +
+            "╚═══════════════════════════════════════════════════════════╝");
+            Console.SetCursorPosition(46, 8);
+            Console.ReadKey();
+        }
 
-        // Get by ID
+
+        // Draw get by ID
         public void DrawMenuGetId()
         {
             Console.WriteLine("" +
@@ -233,7 +241,7 @@ namespace Task_Manager_GPT.UI
                "║                                                           ║\n" +
                "║   ┌───────────────────────────────────────────────────┐   ║");
             Console.WriteLine(DrawRow("ID: ", taskId.Id.ToString()));
-            Console.WriteLine(DrawRow("Name: ", taskId.Title ?? "No name"));
+            Console.WriteLine(DrawRow("Title: ", taskId.Title ?? "Title"));
             Console.WriteLine(DrawRow("Description: ", taskId.Description ?? "No Description"));
             Console.WriteLine(DrawRow("Status: ", taskId.Status.ToString()));
             Console.WriteLine(DrawRow("Create time: ", taskId.CreatedDate.ToString("HH:mm")));
@@ -259,12 +267,151 @@ namespace Task_Manager_GPT.UI
             Console.SetCursorPosition(27, 24);
         }
 
-        // Delete task
+        // Draw update Task
+        public void DrawMenuUpdate()
+        {
+            Console.WriteLine("" +
+               "╔═══════════════════════════════════════════════════════════╗\n" +
+               "║                        Update task                        ║\n" + 
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  Enter your task ID:                              │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "╚═══════════════════════════════════════════════════════════╝\n");
+
+            Console.SetCursorPosition(27, 5);
+        }
+        public void DrawCurrentInformation(TaskItem taskId)
+        {
+            Console.Clear();
+            string DrawRow(string label, string value)
+            {
+                value = value.Length > 37 ? value[..37] : value;
+                return $"║   │  {label,-13}{value,-36}│   ║";
+            }
+
+            Console.WriteLine("" +
+               "╔═══════════════════════════════════════════════════════════╗\n" +
+               "║                     Current information                   ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║");
+            Console.WriteLine(DrawRow("ID: ", taskId.Id.ToString()));
+            Console.WriteLine(DrawRow("Title: ", taskId.Title ?? "Title"));
+            Console.WriteLine(DrawRow("Description: ", taskId.Description ?? "No Description"));
+            Console.WriteLine(DrawRow("Status: ", taskId.Status.ToString()));
+            Console.WriteLine(DrawRow("Create time: ", taskId.CreatedDate.ToString("HH:mm")));
+            Console.WriteLine(
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "║                      Choose Options                       ║\n" +
+               "║                                                           ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  1.  Edit title                                   │   ║\n" +
+               "║   │  2.  Edit Description                             │   ║\n" +
+               "║   │  3.  Edit Status                                  │   ║\n" +
+               "║   │                                                   │   ║\n" +
+               "║   │  B.  Back to menu                                 │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  Choose your option:                              │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "╚═══════════════════════════════════════════════════════════╝\n");
+            Console.SetCursorPosition(27, 25);
+        }
+        public void DrawChangeTitle()
+        {
+            Console.WriteLine("" +
+               "╔═══════════════════════════════════════════════════════════╗\n" +
+               "║                      Update task title                    ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  Enter a new title:                               │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "╚═══════════════════════════════════════════════════════════╝\n");
+        }
+        public void DrawChangeDescription()
+        {
+            Console.WriteLine("" +
+               "╔═══════════════════════════════════════════════════════════╗\n" +
+               "║                  Update task description                  ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  Enter a new description:                         │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "╚═══════════════════════════════════════════════════════════╝\n");
+        }
+        public void DrawChangeStatus(TaskItemStatus status)
+        {
+            string DrawRow(string label, string value)
+            {
+                value = value.Length > 37 ? value[..37] : value;
+                return $"║   │  {label}{value,-41}│   ║";
+            }
+            Console.WriteLine("" +
+               "╔═══════════════════════════════════════════════════════════╗\n" +
+               "║                      Current status                       ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║");
+            Console.WriteLine(DrawRow("Status: ", status.ToString()));
+            Console.WriteLine("" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                      Select new status                    ║\n" +
+               "╠═══════════════════════════════════════════════════════════╣\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  1.  New                                          │   ║\n" +
+               "║   │  2.  In progress                                  │   ║\n" +
+               "║   │  3.  Completed                                    │   ║\n" +
+               "║   │  4.  Canceled                                     │   ║\n" +
+               "║   │                                                   │   ║\n" +
+               "║   │  B.  Back to menu                                 │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+               "║   │  Choose your option:                              │   ║\n" +
+               "║   └───────────────────────────────────────────────────┘   ║\n" +
+               "║                                                           ║\n" +
+               "╚═══════════════════════════════════════════════════════════╝\n");
+            Console.SetCursorPosition(27, 20);
+        }
+        public void DrawUpdateComplited()
+        {
+            Console.Clear();
+            Console.WriteLine("" +
+            "╔═══════════════════════════════════════════════════════════╗\n" +
+            "║                      Operation status                     ║\n" +
+            "╠═══════════════════════════════════════════════════════════╣\n" +
+            "║                                                           ║\n" +
+            "║   ┌───────────────────────────────────────────────────┐   ║\n" +
+            "║   │  The task has been updated successfully !         │   ║\n" +
+            "║   └───────────────────────────────────────────────────┘   ║\n" +
+            "║                                                           ║\n" +
+            "╠═══════════════════════════════════════════════════════════╣\n" +
+            "║                                                           ║\n" +
+            "║            Press [B] to return to the menu:               ║\n" +
+            "║                                                           ║\n" +
+            "╚═══════════════════════════════════════════════════════════╝");
+            Console.SetCursorPosition(46, 10);
+        }
+
+        // Draw delete task
         public void DrawMenuDeleteTask()
         {
             Console.WriteLine("" +
                 "╔═══════════════════════════════════════════════════════════╗\n" +
-                "║                        Deletion task                      ║\n" +
+                "║                        Deleting task                      ║\n" +
                 "╠═══════════════════════════════════════════════════════════╣\n" +
                 "║                                                           ║\n" +
                 "║   ┌───────────────────────────────────────────────────┐   ║\n" +
@@ -298,13 +445,13 @@ namespace Task_Manager_GPT.UI
                 "║   └───────────────────────────────────────────────────┘   ║\n" +
                 "║                                                           ║\n" +
                 "║   ┌───────────────────────────────────────────────────┐   ║\n" +
-                "║   │  Do you want delet this task?                     │   ║\n" +
+                "║   │  Do you want delete this task?                    │   ║\n" +
                 "║   │     [y] Yes / [n] No:                             │   ║\n" +
                 "║   └───────────────────────────────────────────────────┘   ║\n" +
                 "╚═══════════════════════════════════════════════════════════╝\n");
             Console.SetCursorPosition(28, 14);
         }
-        public void DrawDeleteConfirmed()
+        public void DrawDeleteComplited()
         {
             Console.Clear();
             Console.WriteLine("" +
@@ -313,7 +460,7 @@ namespace Task_Manager_GPT.UI
             "╠═══════════════════════════════════════════════════════════╣\n" +
             "║                                                           ║\n" +
             "║   ┌───────────────────────────────────────────────────┐   ║\n" +
-            "║   │  Task was deleted successfully                    │   ║\n" +
+            "║   │  Task has been successfully deleted               │   ║\n" +
             "║   └───────────────────────────────────────────────────┘   ║\n" +
             "║                                                           ║\n" +
             "╠═══════════════════════════════════════════════════════════╣\n" +
@@ -332,7 +479,7 @@ namespace Task_Manager_GPT.UI
             "╠═══════════════════════════════════════════════════════════╣\n" +
             "║                                                           ║\n" +
             "║   ┌───────────────────────────────────────────────────┐   ║\n" +
-            "║   │  Task wasn't deleted                              │   ║\n" +
+            "║   │  Task hasn't been deleted                         │   ║\n" +
             "║   └───────────────────────────────────────────────────┘   ║\n" +
             "║                                                           ║\n" +
             "╠═══════════════════════════════════════════════════════════╣\n" +

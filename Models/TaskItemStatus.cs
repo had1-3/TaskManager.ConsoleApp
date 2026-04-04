@@ -8,9 +8,29 @@ namespace Task_Manager_GPT.Models
 {
     public enum TaskItemStatus
     {
+        [Description("New")]
         New,
-        Completed,
+
+        [Description("In progress")]
         InProgress,
-        Cancelled,
-    }
+
+        [Description("Completed")]
+        Completed,
+
+        [Description("Canceled")]
+        Canceled
+    } // Full finished
+    public static class EnumHelper
+    {
+        public static string GetDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+
+            var attribute = field?
+                .GetCustomAttribute<DescriptionAttribute>();
+
+            return attribute?.Description ?? value.ToString();
+        }
+    } // Full finished
+
 }

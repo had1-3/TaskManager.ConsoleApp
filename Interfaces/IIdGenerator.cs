@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Task_Manager_GPT.Interfaces
 {
-    public interface IIdGenerator
+    public interface IIdGenerator // Full finished
     {
         int GenerateId();
         int GetId();

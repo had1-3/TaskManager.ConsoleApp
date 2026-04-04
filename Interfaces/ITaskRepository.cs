@@ -5,7 +5,7 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Interfaces
 {
-    public interface ITaskRepository
+    public interface ITaskRepository // Full finished
     {
         void Add(TaskItem task);
         void Update(TaskItem task);

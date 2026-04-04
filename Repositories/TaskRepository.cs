@@ -7,7 +7,7 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Repositories
 {
-    public class TaskRepository : ITaskRepository
+    public class TaskRepository : ITaskRepository // Full finished
     {
         private readonly List<TaskItem> _tasks = new List<TaskItem>();
         public void Add(TaskItem task)
@@ -25,11 +25,8 @@ namespace Task_Manager_GPT.Repositories
         public void Update(TaskItem task)
         {
             var selectedTask = _tasks.FirstOrDefault(taskItem => taskItem.Id == task.Id);
-            if (selectedTask == null)
-            {
-                throw new KeyNotFoundException($"Task with ID {task.Id} not found");
-            }
-            selectedTask.Title = task.Title;
+
+            selectedTask!.Title = task.Title;
             selectedTask.Description = task.Description;
             selectedTask.Status = task.Status;
         }

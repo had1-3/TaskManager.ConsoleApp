@@ -10,23 +10,23 @@ using Task_Manager_GPT.Models;
 
 namespace Task_Manager_GPT.Services
 {
-    public class TaskService : ITaskService
+    public class TaskService : ITaskService // Full finished
     {
         private readonly ITaskRepository _repository;
         private readonly IIdGenerator _idGenerator;
+
         public TaskService(ITaskRepository repository, IIdGenerator idGenerator)
         {
             _repository = repository;
             _idGenerator = idGenerator;
         }
+
+        // Create task
         public void CreateTask(string title, string description)
         {
-            if (title == null)
+            if (title == null && description == null)
             {
-                throw new KeyNotFoundException("A task must have name!");
-            }
-            if (description == null)
-            {
+                title = "Empty title";
                 description = "Empty desciption";
             }
             var task = new TaskItem
@@ -37,37 +37,74 @@ namespace Task_Manager_GPT.Services
             };
             _repository.Add(task);
         }
+
+        // Get all task
         public List<TaskItem> GetAllTasks()
         {
             return _repository.GetAll();
         }
+
+        // Get task by id
         public TaskItem GetTaskById(int Id)
         {
             var taskId = _repository.GetById(Id);
             if (taskId == null)
             {
-                throw new KeyNotFoundException($"Task with ID {Id} not found");
+                throw new KeyNotFoundException($"ID not found");
             }
             return taskId;
         }
-        public void UpdateTask(int updatedTaskId, string updatedTaskTitle, string updatedTaskDescription, TaskItemStatus updatedTaskStatus)
+
+        // Update task
+        public void UpdateTaskTitle(int taskId, string updatedTaskTitle)
         {
-            if (updatedTaskTitle == null)
-            {
-                throw new ArgumentNullException(nameof(updatedTaskTitle), "Task cannot be null");
-            }
-            var existingTask = _repository.GetById(updatedTaskId);
+            var existingTask = _repository.GetById(taskId);
             if (existingTask == null)
             {
-                throw new KeyNotFoundException($"Task with ID {updatedTaskId} not found");
+                throw new KeyNotFoundException($"Task not found");
             }
             existingTask.Title = updatedTaskTitle;
+
+            _repository.Update(existingTask);
+        }
+        public void UpdateTaskDescription(int taskId, string updatedTaskDescription)
+        {
+            var existingTask = _repository.GetById(taskId);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException($"Task not found");
+            }
+
             existingTask.Description = updatedTaskDescription;
+
+            _repository.Update(existingTask);
+        }
+        public void UpdateTaskStatus(int taskId, TaskItemStatus updatedTaskStatus)
+        {
+            var existingTask = _repository.GetById(taskId);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException($"Task not found");
+            }
+
             existingTask.Status = updatedTaskStatus;
 
             _repository.Update(existingTask);
         }
-        public TaskItemStatus CheckItemStatus(int Id)
+
+        // Delete task
+        public void DeleteTask(int Id)
+        {
+            var existingTask = _repository.GetById(Id);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException($"Task not found");
+            }
+            _repository.Remove(Id);
+        }
+
+        // Method for get value
+        public TaskItemStatus GetTaskStatus(int Id)
         {
             var taskStatus = _repository.GetById(Id);
             if (taskStatus == null)
@@ -76,22 +113,31 @@ namespace Task_Manager_GPT.Services
             }
             return taskStatus.Status;
         }
-        public void DeleteTask(int Id)
-        {
-            var removeTask = _repository.GetById(Id);
-            if (removeTask == null)
-            {
-                throw new KeyNotFoundException($"Task with ID {Id} not found");
-            }
-            _repository.Remove(Id);
-        }
-        public int ServiceGetId()
+        public int GetTaskId()
         {
             return _idGenerator.GetId();
         }
         public int GetTaskCount()
         {
             return _repository.GetAll().Count;
+        }
+        public string GetTitle(int currentId)
+        {
+            var existingTask = _repository.GetById(currentId);
+            if (existingTask?.Title == null)
+            {
+                throw new KeyNotFoundException($"Task not found");
+            }
+            return existingTask.Title;
+        }
+        public string GetDescription(int currentId)
+        {
+            var existingTask = _repository.GetById(currentId);
+            if (existingTask?.Description == null)
+            {
+                throw new KeyNotFoundException($"Task not found");
+            }
+            return existingTask.Description;
         }
     }
 }

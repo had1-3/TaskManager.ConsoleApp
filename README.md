@@ -8,12 +8,6 @@ A simple but well-structured console-based task manager built with C# and .NET, 
 
 ---
 
-## UI Preview
-
-![Console UI](./assets/TaskMangerMenu.png)
-
----
-
 ## Features
 
 - Create new tasks  
@@ -102,14 +96,5 @@ public class TaskItem
 🧪 Unit tests
 🔍 Search and filtering
 🌐 API version (ASP.NET Core)
-
----
-
-## What I Learned
-- Building structured console applications
-- Managing program flow using handlers
-- Working with enums and dictionaries
-- Designing scalable architecture for small projects
-- Improving console UI/UX
 
 ---

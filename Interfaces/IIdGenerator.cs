@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Task_Manager_GPT.Interfaces
+namespace Task_Manager.Interfaces
 {
     public interface IIdGenerator // Full finished
     {

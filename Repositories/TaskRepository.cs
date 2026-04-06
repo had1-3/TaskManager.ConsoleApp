@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Task_Manager_GPT.Interfaces;
-using Task_Manager_GPT.Models;
+using Task_Manager.Interfaces;
+using Task_Manager.Models;
 
-namespace Task_Manager_GPT.Repositories
+namespace Task_Manager.Repositories
 {
     public class TaskRepository : ITaskRepository // Full finished
     {

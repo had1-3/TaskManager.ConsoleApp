@@ -6,12 +6,12 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Task_Manager_GPT.Helpers;
-using Task_Manager_GPT.Repositories;
-using Task_Manager_GPT.Services;
-using Task_Manager_GPT.UI;
+using Task_Manager.Helpers;
+using Task_Manager.Repositories;
+using Task_Manager.Services;
+using Task_Manager.UI;
 
-namespace Task_Manager_GPT;
+namespace Task_Manager;
 
 internal class Program
 {

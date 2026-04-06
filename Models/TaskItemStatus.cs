@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 
-namespace Task_Manager_GPT.Models
+namespace Task_Manager.Models
 {
     public enum TaskItemStatus
     {

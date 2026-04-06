@@ -4,11 +4,11 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Task_Manager_GPT.Helpers;
-using Task_Manager_GPT.Interfaces;
-using Task_Manager_GPT.Models;
+using Task_Manager.Helpers;
+using Task_Manager.Interfaces;
+using Task_Manager.Models;
 
-namespace Task_Manager_GPT.Services
+namespace Task_Manager.Services
 {
     public class TaskService : ITaskService // Full finished
     {
@@ -26,8 +26,7 @@ namespace Task_Manager_GPT.Services
         {
             if (title == null && description == null)
             {
-                title = "Empty title";
-                description = "Empty desciption";
+                throw new KeyNotFoundException($"title and description must have a value");
             }
             var task = new TaskItem
             {
@@ -121,7 +120,7 @@ namespace Task_Manager_GPT.Services
         {
             return _repository.GetAll().Count;
         }
-        public string GetTitle(int currentId)
+        public string GetTaskTitle(int currentId)
         {
             var existingTask = _repository.GetById(currentId);
             if (existingTask?.Title == null)
@@ -130,7 +129,7 @@ namespace Task_Manager_GPT.Services
             }
             return existingTask.Title;
         }
-        public string GetDescription(int currentId)
+        public string GetTaskDescription(int currentId)
         {
             var existingTask = _repository.GetById(currentId);
             if (existingTask?.Description == null)

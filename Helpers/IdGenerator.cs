@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Task_Manager_GPT.Interfaces;
-using Task_Manager_GPT.Models;
+using Task_Manager.Interfaces;
+using Task_Manager.Models;
 
-namespace Task_Manager_GPT.Helpers
+namespace Task_Manager.Helpers
 {
     public class IdGenerator : IIdGenerator // Full finished
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using Task_Manager_GPT.Models;
+using Task_Manager.Models;
 
-namespace Task_Manager_GPT.Interfaces
+namespace Task_Manager.Interfaces
 {
     public interface ITaskService // Full finished
     {
@@ -29,7 +29,7 @@ namespace Task_Manager_GPT.Interfaces
         TaskItemStatus GetTaskStatus(int Id);
         int GetTaskId();
         int GetTaskCount();
-        string GetDescription(int currentId);
-        string GetTitle(int currentId);
+        string GetTaskDescription(int currentId);
+        string GetTaskTitle(int currentId);
     }
 }

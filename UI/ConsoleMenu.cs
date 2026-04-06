@@ -7,9 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Task_Manager_GPT.Models;
+using Task_Manager.Models;
 
-namespace Task_Manager_GPT.UI
+namespace Task_Manager.UI
 {
     public class ConsoleMenu // Full finished
     {

@@ -5,11 +5,11 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Task_Manager_GPT.Interfaces;
-using Task_Manager_GPT.Models;
-using Task_Manager_GPT.Services;
+using Task_Manager.Interfaces;
+using Task_Manager.Models;
+using Task_Manager.Services;
 
-namespace Task_Manager_GPT.UI
+namespace Task_Manager.UI
 {
     public class ConsoleInputHandler
     {
